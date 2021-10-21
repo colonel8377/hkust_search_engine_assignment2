@@ -101,14 +101,17 @@ whoosh_query(text, top_number)
 1. For whoosh, I use a different way to represent the information from paper.json.
 ## Starting up
 ###Docker
-#### For window users:
+#### For window users
 ##### 1. Increase virtual limits
 ```
 # enter the wsl
+# cmd into command line
 wsl
 # (if there is not enough v-mem)
-sudo sysctl -w vm.max_map_count=524288 
-# docker
+sudo sysctl -w vm.max_map_count=524288
+# may need passwords
+exit
+# docker, go into the root directory (./flask_se/)
 docker-compose build
 docker-compose up
 # wait
