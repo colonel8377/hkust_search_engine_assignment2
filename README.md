@@ -1,16 +1,58 @@
 # Search Engine
 ###### A single but not simple searching framework.
-## Material
-> 778 esaays from public resources (paper.json)
+## Preparing
+- 778 esaays from public resources (paper.json)
+- Enough memory (at least 8G)
+- Docker and Docker-compose
 ## Highlight
 - **Fancy Data Structure (Tries/Blist/Sortedlist/Sorteddict/SortedKeyList)**
-- **Fix original cross-fields problem**
+- **Fix requests cross-fields problem**
 - **Ran in real server (k8s or docker)**
-- **Seperate frontend and backend system (nginx)**
+- **Separate frontend and backend system (nginx)**
 - **Auto-complete and search prediction (elasticsearch)**
-- **Typo correction**
-- **Pre-built index (whoosh)**
-- **Various searching methods**kooooooooooooofo
+- **Typo correction (spellchecker)**
+- **Pre-built index file-system (whoosh)**
+- **Various searching methods**
+- **Typing Prediction**
+- **Cache requests and calculation results**
+## Structure
+```
+flask_se
+├─ README.md
+├─ backend
+│    ├─ compute_query_weight.py
+│    ├─ docker-compose.yml
+│    ├─ elastic_search.py
+│    ├─ es
+│    │    └─ synonym.txt
+│    ├─ indexdir
+│    │    ├─ whoosh index file system
+│    ├─ initialize_search_tries.py
+│    ├─ nginx
+│    │    └─ conf
+│    ├─ paper.json
+│    ├─ parse_text.py
+│    ├─ query.txt
+│    ├─ requirements.txt
+│    ├─ run_wrapper_script.sh
+│    ├─ se_sample.py
+│    ├─ spell_checker.py
+│    ├─ tries.py
+│    ├─ web.py
+│    └─ whoosh_search.py
+└─ frontend
+       ├─ css
+       │    └─ index.css
+       ├─ img
+       │    └─ search-white.png
+       ├─ index.html
+       ├─ js
+       │    └─ index.js
+       └─ lib
+              ├─ bootstrap-4.1.3-dist
+              └─ jquery-3.3.1.min.js
+```
+
 ## Search
 ### original tf idf searching process
 1. Original Search
@@ -116,8 +158,12 @@ es = Elasticsearch([es_host], maxsize=25)
 ##### Customization
 - elasticsearch
 <p>Restful Api: Elasticsearch accpts restful api, which I have set up in es.py. You may rewrite some requests to create different index.</p>
+1. For auto-completion, I set fuzziness to 10, since there are not enough data sets in the paper.json</br>
+2. For phrase suggestion, I use shingles instead of n-grams to correct misspelling or typos.
+
 - whoosh
 <p>Whoosh Schema: Here I assume that the author's name and paper's publishing year are key words and can not be stemming by the engine.</p>
+
 Everything is all right, have fun!
 
 ### Contact
