@@ -95,6 +95,7 @@ def compute_phrase_weight(possible_paper_dict, query_phrases, pos, phrase_pos: l
     if len(doc_keys) < 1:
         for k in possible_paper_dict:
             possible_paper_dict[k].append(0)
+        phrase_pos.append(sorteddict())
         return compute_phrase_weight(possible_paper_dict, query_phrases, pos + 1, phrase_pos)
     else:
         # calculate tf for phrase
@@ -120,7 +121,6 @@ def calculate_phrase_tf(doc_keys, phrases_index, phrases):
             is_phrase = True
             for j in range(1, len(word_pos_list)):
                 start_pos = next_word_start_pos.get(j, 0)
-                print(word_pos_list[j])
                 try:
                     next_word_start_pos[j] = word_pos_list[j].index(word_pos_list[0][i] + j, start=start_pos) + 1
                 except ValueError:

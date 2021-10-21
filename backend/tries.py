@@ -47,7 +47,7 @@ class Trie:
         if node and node.doc_index:
             return node.doc_index
         else:
-            return SortedKeyList()
+            return sorteddict()
 
     def get_df(self, word) -> int:
         node = self.search(word)

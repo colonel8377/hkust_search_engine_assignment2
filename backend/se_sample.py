@@ -72,5 +72,5 @@ def search_api(query):
 
 if __name__ == "__main__":
     # this is for testing purpose
-    text = '"Dialogue Act Classification"'
+    text = '"knowledge graph" ice "ice cream"'
     original_tf_idf(text, 10)
