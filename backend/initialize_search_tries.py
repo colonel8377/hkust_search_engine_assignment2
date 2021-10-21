@@ -1,7 +1,3 @@
-from backend.web import cache
-
-
-@cache.memoize(100)
 def parse_json(file_name: str):
     assert file_name is not None and len(file_name) != 0
     with open(file_name, 'r') as load_f:
@@ -31,7 +27,6 @@ def analysis_authors(authors: list):
     return res
 
 
-@cache.memoize(100)
 def init_tries(paper_dict, is_only_abstract):
     from tries import Trie
     from nltk.corpus import stopwords
@@ -67,7 +62,6 @@ def init_tries(paper_dict, is_only_abstract):
     return paper_tries, paper_word_count
 
 
-@cache.memoize(100)
 def init_weighted_keywords(paper_tries, paper_word_count):
     from blist import sortedlist
     paper_word_weight = {}

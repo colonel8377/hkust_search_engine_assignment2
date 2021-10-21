@@ -2,7 +2,7 @@ translitcodec
 blist
 sortedcontainers
 Flask==1.1.2
-flask_cache
+Werkzeug==0.16.1
 numpy
 whoosh
 flask-cors

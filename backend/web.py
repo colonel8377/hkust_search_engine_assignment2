@@ -1,18 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
-import coloredlogs
 
+import coloredlogs
 from flask import Flask, jsonify
 from flask_cors import CORS
-from flask_cache import Cache
 
 from initialize_search_tries import init_weighted_keywords, init_tries, parse_json
 from se_sample import search_api, suggest_api
 
 app = Flask(__name__)
-CORS(app)
-cache = Cache().init_app(app, config={"CACHE_TYPE": "simple"})
 logger = logging.getLogger(__name__)
 
 paper_dict = parse_json('paper.json')
@@ -40,8 +37,13 @@ def suggest(key):
 
 def create_app():
     init_log()
-    CORS(app, supports_credentials=True)
+    supports_credentials = True
+    init_app(app, supports_credentials)
     return app
+
+
+def init_app(app, supports_credentials):
+    CORS(app, supports_credentials=supports_credentials)
 
 
 def init_log():
@@ -52,5 +54,4 @@ def init_log():
 
 
 if __name__ == '__main__':
-    # app.run(host="0.0.0.0", port=4000, debug=True)
-    print(paper_word_weight)
+    app.run(host="0.0.0.0", port=4000, debug=True)

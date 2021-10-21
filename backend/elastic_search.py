@@ -3,7 +3,7 @@ import os
 
 from elasticsearch import Elasticsearch
 
-from web import paper_dict, cache
+from web import paper_dict
 
 es_host = os.environ.get('ELASTICSEARCH_URL', 'http://localhost:9200')
 es = Elasticsearch([es_host], maxsize=25)
@@ -11,7 +11,6 @@ es = Elasticsearch([es_host], maxsize=25)
 logger = logging.getLogger(__name__)
 
 
-@cache.memoize(50)
 def phrase_suggest(index, prefix):
     body = {
         'suggest': {
@@ -49,7 +48,6 @@ def phrase_suggest(index, prefix):
         logger.error('elasticsearch.exceptions.TransportError')
 
 
-@cache.memoize(50)
 def prefix_suggest(index, prefix):
     body = {
         'suggest': {
