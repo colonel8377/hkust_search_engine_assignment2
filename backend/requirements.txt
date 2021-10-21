@@ -1,0 +1,14 @@
+translitcodec
+blist
+sortedcontainers
+Flask==1.1.2
+flask_cache
+numpy
+whoosh
+flask-cors
+retrying
+gunicorn
+nltk
+coloredlogs
+pyspellchecker
+elasticsearch

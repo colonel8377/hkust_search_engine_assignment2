@@ -1,0 +1,123 @@
+version: '2.2'
+services:
+  # sudo sysctl -w vm.max_map_count=524288 (if there is not enough v-mem)
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits: # 栈内存的上限
+      memlock:
+        soft: -1
+        hard: -1
+    hostname: elasticsearch
+    restart: always
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+      - ./es:/usr/share/elasticsearch/config/analysis
+    ports:
+      - "9200:9200"
+    networks:
+      - elastic
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data02:/usr/share/elasticsearch/data
+      - ./es:/usr/share/elasticsearch/config/analysis
+    networks:
+      - elastic
+  es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
+    container_name: es03
+    environment:
+      - node.name=es03
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data03:/usr/share/elasticsearch/data
+      - ./es:/usr/share/elasticsearch/config/analysis
+    networks:
+      - elastic
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.15.0
+    container_name: kiba01
+    environment:
+      ELASTICSEARCH_URL: http://es01:9200
+      ELASTICSEARCH_HOSTS: '["http://es01:9200","http://es02:9200","http://es03:9200"]'
+    hostname: kibana
+    restart: always
+    networks:
+      - elastic
+    ports:
+      - 5601:5601
+  nginx:
+    restart: always
+    image: nginx
+    container_name: nginx
+    ports:
+      - 8000:8000
+    expose:
+      - 8000
+    links:
+      - search_engine:search_engine
+    volumes:
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      - ../frontend/:/opt/static
+    networks:
+      - elastic
+  search_engine:
+    container_name: search_engine
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: bash ./run_wrapper_script.sh
+    restart: on-failure
+    volumes:
+      - ./:/opt/apps/search_engine/
+    ports:
+      - 4000:4000
+    expose:
+      - 4000
+    environment:
+      - PYTHONUNBUFFERED=0
+      - TZ=Asia/Shanghai
+      - FLASK_ENV=development
+      - FLASK_APP=web:create_app
+      - FLASK_RUN_PORT=4000
+      - ELASTICSEARCH_URL=http://es01:9200
+    networks:
+      - elastic
+volumes:
+  data01:
+    driver: local
+  data02:
+    driver: local
+  data03:
+    driver: local
+networks:
+  elastic:
+    driver: bridge
